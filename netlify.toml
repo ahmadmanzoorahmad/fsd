@@ -1,0 +1,16 @@
+[build]
+  # Full build: install deps → codegen → copy Excel → build frontend
+  command = "pnpm install && pnpm --filter @workspace/api-spec run codegen && mkdir -p netlify/functions/data && cp artifacts/api-server/data/fuel-subsidy.xlsx netlify/functions/data/fuel-subsidy.xlsx && pnpm --filter @workspace/fuel-dashboard run build:netlify"
+  publish   = "artifacts/fuel-dashboard/dist/public"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler    = "esbuild"
+  # Bundle the Excel data file alongside the function
+  included_files  = ["netlify/functions/data/**"]
+
+# SPA fallback — all non-asset paths serve index.html
+[[redirects]]
+  from   = "/*"
+  to     = "/index.html"
+  status = 200
